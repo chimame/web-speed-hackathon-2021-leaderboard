@@ -6,6 +6,9 @@ account_id = ""
 route = ""
 workers_dev = true
 
+[miniflare]
+env_path = ".env"
+
 [site]
 bucket = "./public"
 entry-point = "."
