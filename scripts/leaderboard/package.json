@@ -5,12 +5,16 @@
   "description": "",
   "license": "UNLICENCED",
   "scripts": {
-    "build": "remix build",
-    "dev": "remix watch",
     "postinstall": "remix setup cloudflare-workers",
+    "build:css": "tailwindcss -i ./app/styles/tailwind.css -o ./app/styles/generated.css",
+    "build:remix": "remix build",
+    "build": "npm run build:css && npm run build:remix",
     "build:worker": "esbuild --define:process.env.NODE_ENV='\"production\"' --minify --bundle --sourcemap --outdir=dist ./worker",
+    "dev:remix": "remix watch",
+    "dev:css": "tailwindcss -i ./app/styles/tailwind.css -o ./app/styles/generated.css --watch",
     "dev:worker": "esbuild --define:process.env.NODE_ENV='\"development\"' --bundle --sourcemap --outdir=dist ./worker",
-    "start": "miniflare --build-command \"npm run dev:worker\" --watch",
+    "dev": "NODE_ENV=development concurrently \"npm:dev:*\"",
+    "start": "miniflare --watch",
     "deploy": "npm run build && wrangler publish"
   },
   "dependencies": {
@@ -27,8 +31,10 @@
     "@remix-run/dev": "^1.0.6",
     "@types/react": "^17.0.24",
     "@types/react-dom": "^17.0.9",
+    "concurrently": "^6.4.0",
     "esbuild": "0.13.14",
     "miniflare": "2.0.0-next.3",
+    "tailwindcss": "^3.0.5",
     "typescript": "^4.1.2"
   },
   "engines": {
