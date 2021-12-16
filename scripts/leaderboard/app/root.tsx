@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
   useCatch
 } from "remix";
+import { ChakraProvider } from "@chakra-ui/react";
 import type { LinksFunction } from "remix";
 
 import globalStylesUrl from "~/styles/global.css";
@@ -30,9 +31,11 @@ export let links: LinksFunction = () => {
 export default function App() {
   return (
     <Document>
-      <Layout>
-        <Outlet />
-      </Layout>
+      <ChakraProvider>
+        <Layout>
+          <Outlet />
+        </Layout>
+      </ChakraProvider>
     </Document>
   );
 }
@@ -42,17 +45,19 @@ export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
   return (
     <Document title="Error!">
-      <Layout>
-        <div>
-          <h1>There was an error</h1>
-          <p>{error.message}</p>
-          <hr />
-          <p>
-            Hey, developer, you should replace this with what you want your
-            users to see.
-          </p>
-        </div>
-      </Layout>
+      <ChakraProvider>
+        <Layout>
+          <div>
+            <h1>There was an error</h1>
+            <p>{error.message}</p>
+            <hr />
+            <p>
+              Hey, developer, you should replace this with what you want your
+              users to see.
+            </p>
+          </div>
+        </Layout>
+      </ChakraProvider>
     </Document>
   );
 }
@@ -83,12 +88,14 @@ export function CatchBoundary() {
 
   return (
     <Document title={`${caught.status} ${caught.statusText}`}>
-      <Layout>
-        <h1>
-          {caught.status}: {caught.statusText}
-        </h1>
-        {message}
-      </Layout>
+      <ChakraProvider>
+        <Layout>
+          <h1>
+            {caught.status}: {caught.statusText}
+          </h1>
+          {message}
+        </Layout>
+      </ChakraProvider>
     </Document>
   );
 }
