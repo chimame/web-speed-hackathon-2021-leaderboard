@@ -1,11 +1,26 @@
 import React, { useRef } from 'react'
-import { useNavigate } from 'remix'
 import { supabase } from '~/util/supabaseClient'
+import { useAuth } from "~/hooks/useAuth"
+import { LoaderFunction, redirect, useLoaderData } from 'remix'
+import { getUserToken } from '~/util/session.server'
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const token = await getUserToken(request.headers.get('Cookie'))
+  if (token === null) {
+    return {}
+  }
+  const { user, error } = await supabase.auth.api.getUser(token)
+  if (error !== null) {
+    console.error(error)
+  }
+  return user ? redirect('/dashboard') : {}
+}
 
 export default function SignIn() {
+  useLoaderData()
+  useAuth()
   const emailInput = useRef<HTMLInputElement>(null)
   const passwordInput = useRef<HTMLInputElement>(null)
-  const navigate = useNavigate()
 
   const onSubmitHandle = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -14,13 +29,11 @@ export default function SignIn() {
     const email = emailInput.current?.value
     const password = passwordInput.current?.value
     const signIn = async () => {
-      const { user, error } = await supabase.auth.signIn({ email, password })
+      const { error } = await supabase.auth.signIn({ email, password })
 
       if (error) {
-        return console.log(error)
+        return console.error(error)
       }
-      console.log(user)
-      navigate('/')
     }
     signIn()
   }
