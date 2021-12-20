@@ -1,4 +1,30 @@
+import React, { useRef } from 'react'
+import { useNavigate } from 'remix'
+import { supabase } from '~/util/supabaseClient'
+
 export default function SignIn() {
+  const emailInput = useRef<HTMLInputElement>(null)
+  const passwordInput = useRef<HTMLInputElement>(null)
+  const navigate = useNavigate()
+
+  const onSubmitHandle = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    // TODO: validation
+    const email = emailInput.current?.value
+    const password = passwordInput.current?.value
+    const signIn = async () => {
+      const { user, error } = await supabase.auth.signIn({ email, password })
+
+      if (error) {
+        return console.log(error)
+      }
+      console.log(user)
+      navigate('/')
+    }
+    signIn()
+  }
+
   return (
     <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -10,7 +36,7 @@ export default function SignIn() {
           />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
         </div>
-        <form className="mt-8 space-y-6" action="#" method="POST">
+        <form className="mt-8 space-y-6" onSubmit={onSubmitHandle}>
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -19,6 +45,7 @@ export default function SignIn() {
               </label>
               <input
                 id="email-address"
+                ref={emailInput}
                 name="email"
                 type="email"
                 autoComplete="email"
@@ -33,6 +60,7 @@ export default function SignIn() {
               </label>
               <input
                 id="password"
+                ref={passwordInput}
                 name="password"
                 type="password"
                 autoComplete="current-password"

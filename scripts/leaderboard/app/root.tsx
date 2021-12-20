@@ -5,11 +5,21 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useCatch
+  useCatch,
+  useLoaderData
 } from "remix";
 import type { LinksFunction } from "remix";
 
 import styles from '~/styles/generated.css';
+
+export const loader = () => {
+  return {
+    ENV: {
+      SUPABASE_URL: SUPABASE_URL,
+      SUPABASE_ANON_KEY: SUPABASE_ANON_KEY
+    }
+  }
+}
 
 // https://remix.run/api/app#links
 export let links: LinksFunction = () => {
@@ -85,6 +95,8 @@ function Document({
   children: React.ReactNode;
   title?: string;
 }) {
+  const data = useLoaderData()
+
   return (
     <html lang="ja" className="h-full bg-gray-50">
       <head>
@@ -96,6 +108,13 @@ function Document({
       </head>
       <body className="h-full">
         {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(
+              data?.ENV
+            )}`
+          }}
+        />
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
