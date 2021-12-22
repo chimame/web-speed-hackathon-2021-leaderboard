@@ -2,18 +2,15 @@ import React, { useRef } from 'react'
 import { supabase } from '~/util/supabaseClient'
 import { useAuth } from "~/hooks/useAuth"
 import { LoaderFunction, redirect, useLoaderData } from 'remix'
-import { getUserToken } from '~/util/session.server'
+import { getUser } from '~/models/User'
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const token = await getUserToken(request.headers.get('Cookie'))
-  if (token === null) {
+  const cookie = request.headers.get('Cookie')
+  if (cookie === null || getUser(cookie) === null) {
     return {}
   }
-  const { user, error } = await supabase.auth.api.getUser(token)
-  if (error !== null) {
-    console.error(error)
-  }
-  return user ? redirect('/dashboard') : {}
+
+  return redirect('/dashboard')
 }
 
 export default function SignIn() {
