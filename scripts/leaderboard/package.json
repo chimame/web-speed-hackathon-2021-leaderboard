@@ -14,7 +14,7 @@
     "dev:css": "tailwindcss -i ./app/styles/tailwind.css -o ./app/styles/generated.css --watch",
     "dev:worker": "esbuild --define:process.env.NODE_ENV='\"development\"' --bundle --sourcemap --outdir=dist ./worker",
     "dev": "NODE_ENV=development concurrently \"npm:dev:*\"",
-    "start": "miniflare --watch",
+    "start": "./start.sh",
     "deploy": "npm run build && wrangler publish"
   },
   "dependencies": {
