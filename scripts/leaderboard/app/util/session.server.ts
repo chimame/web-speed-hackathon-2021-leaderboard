@@ -29,5 +29,6 @@ export const createUserToken = async (cookieHeader: string | null, token?: strin
 
 export const getUserToken = async (cookieHeader: string | null) => {
   const session = await storage.getSession(cookieHeader)
-  return session.get('token') as null | string
+  const token = session.get('token') as null | string | undefined
+  return token ? token : null
 }

@@ -6,7 +6,7 @@ import { getUser } from '~/models/User'
 
 export const loader: LoaderFunction = async ({ request }) => {
   const cookie = request.headers.get('Cookie')
-  if (cookie === null || getUser(cookie) === null) {
+  if (cookie === null || await getUser(cookie) === null) {
     return {}
   }
 
